@@ -214,16 +214,14 @@ class CPU:
             self.ir = self.ram_read(self.pc) & 0x3F
             self.branch_table[self.ir]()
 
-            # Advance PC by the highest two order bits
-            if self.ir != instructions['CALL'] and self.ir != instructions['RET'] and self.ir != instructions['JMP'] and self.ir != instructions['JEQ'] and self.ir != instructions['JNE'] :
-                self.pc = self.pc + (self.ram_read(self.pc) >> 6) + 1
-
     def hlt(self):
         sys.exit()
 
     def ldi(self):
         self.registers[self.ram_read(self.pc + 1) & 0x07] = self.ram_read(self.pc + 2)
-        return
+
+        # Advance PC by the highest two order bits
+        self.pc = self.pc + (self.ram_read(self.pc) >> 6) + 1
 
     def push(self):
         # Decrement stack pointer
@@ -240,6 +238,9 @@ class CPU:
         address_to_push_to = self.sp
         self.ram_write(address_to_push_to, value)
 
+        # Advance PC by the highest two order bits
+        self.pc = self.pc + (self.ram_read(self.pc) >> 6) + 1
+
     def pop(self):
         # Get value from RAM
         address_to_pop_from = self.sp
@@ -252,9 +253,14 @@ class CPU:
         # Increment SP
         self.sp += 1
 
+        # Advance PC by the highest two order bits
+        self.pc = self.pc + (self.ram_read(self.pc) >> 6) + 1
+
     def prn(self):
         print(self.registers[self.ram_read(self.pc + 1) & 0x07])
-        return 
+
+        # Advance PC by the highest two order bits
+        self.pc = self.pc + (self.ram_read(self.pc) >> 6) + 1
         
     def call(self):
         # Get address of the next instruction
@@ -315,16 +321,22 @@ class CPU:
         reg_b = self.ram_read(self.pc + 2)
 
         self.alu('CMP', reg_a, reg_b)
-        return
+
+        # Advance PC by the highest two order bits
+        self.pc = self.pc + (self.ram_read(self.pc) >> 6) + 1
 
     def add(self):
         reg_a = self.ram_read(self.pc + 1)
         reg_b = self.ram_read(self.pc + 2)
 
         self.alu('ADD', reg_a, reg_b)
-        return
+
+        # Advance PC by the highest two order bits
+        self.pc = self.pc + (self.ram_read(self.pc) >> 6) + 1
 
     def mul(self):
         self.r0 = self.r0 * self.r1
-        return
+
+        # Advance PC by the highest two order bits
+        self.pc = self.pc + (self.ram_read(self.pc) >> 6) + 1
 
