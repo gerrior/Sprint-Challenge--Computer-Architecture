@@ -120,11 +120,11 @@ class CPU:
 
         try:
             # filename = sys.argv[1] # This will throw if there is no second argument
-            # filename = "examples/mult.ls8"
-            # filename = "examples/print8.ls8"
-            # filename = "examples/stack.ls8"
-            # filename = "examples/call.ls8"
-            filename = "sctest.ls8"
+            filename = "examples/mult.ls8"  # Multiply 8x9 and print 72
+            # filename = "examples/print8.ls8"  # Print the number 8 on the screen
+            # filename = "examples/stack.ls8" # Print 2, 4, 1
+            # filename = "examples/call.ls8" # Print 20, 30, 36, 60
+            # filename = "sctest.ls8"
 
             file = open(filename, "r")
             for line in file:
@@ -221,7 +221,7 @@ class CPU:
         self.registers[self.ram_read(self.pc + 1) & 0x07] = self.ram_read(self.pc + 2)
 
         # Advance PC by the highest two order bits
-        self.pc = self.pc + (self.ram_read(self.pc) >> 6) + 1
+        self.pc += (self.ram_read(self.pc) >> 6) + 1
 
     def push(self):
         # Decrement stack pointer
@@ -239,7 +239,7 @@ class CPU:
         self.ram_write(address_to_push_to, value)
 
         # Advance PC by the highest two order bits
-        self.pc = self.pc + (self.ram_read(self.pc) >> 6) + 1
+        self.pc += (self.ram_read(self.pc) >> 6) + 1
 
     def pop(self):
         # Get value from RAM
@@ -254,13 +254,13 @@ class CPU:
         self.sp += 1
 
         # Advance PC by the highest two order bits
-        self.pc = self.pc + (self.ram_read(self.pc) >> 6) + 1
+        self.pc += (self.ram_read(self.pc) >> 6) + 1
 
     def prn(self):
         print(self.registers[self.ram_read(self.pc + 1) & 0x07])
 
         # Advance PC by the highest two order bits
-        self.pc = self.pc + (self.ram_read(self.pc) >> 6) + 1
+        self.pc += (self.ram_read(self.pc) >> 6) + 1
         
     def call(self):
         # Get address of the next instruction
@@ -303,7 +303,7 @@ class CPU:
 
             self.pc = stored_addr
         else:
-            self.pc = self.pc + (self.ram_read(self.pc) >> 6) + 1
+            self.pc += (self.ram_read(self.pc) >> 6) + 1
 
     def jne(self):
         # If equal flag is set (true), jump to the address stored in the given register.
@@ -314,7 +314,7 @@ class CPU:
 
             self.pc = stored_addr
         else:
-            self.pc = self.pc + (self.ram_read(self.pc) >> 6) + 1
+            self.pc += (self.ram_read(self.pc) >> 6) + 1
 
     def cmp(self):
         reg_a = self.ram_read(self.pc + 1)
@@ -323,7 +323,7 @@ class CPU:
         self.alu('CMP', reg_a, reg_b)
 
         # Advance PC by the highest two order bits
-        self.pc = self.pc + (self.ram_read(self.pc) >> 6) + 1
+        self.pc += (self.ram_read(self.pc) >> 6) + 1
 
     def add(self):
         reg_a = self.ram_read(self.pc + 1)
@@ -332,11 +332,11 @@ class CPU:
         self.alu('ADD', reg_a, reg_b)
 
         # Advance PC by the highest two order bits
-        self.pc = self.pc + (self.ram_read(self.pc) >> 6) + 1
+        self.pc += (self.ram_read(self.pc) >> 6) + 1
 
     def mul(self):
         self.r0 = self.r0 * self.r1
 
         # Advance PC by the highest two order bits
-        self.pc = self.pc + (self.ram_read(self.pc) >> 6) + 1
+        self.pc += (self.ram_read(self.pc) >> 6) + 1
 
