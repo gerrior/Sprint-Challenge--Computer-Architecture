@@ -133,8 +133,8 @@ class CPU:
         program = []
 
         try:
-            # filename = sys.argv[1] # This will throw if there is no second argument
-            filename = "examples/mult.ls8"  # Multiply 8x9 and print 72
+            filename = sys.argv[1] # This will throw if there is no second argument
+            # filename = "examples/mult.ls8"  # Multiply 8x9 and print 72
             # filename = "examples/print8.ls8"  # Print the number 8 on the screen
             # filename = "examples/stack.ls8" # Print 2, 4, 1
             # filename = "examples/call.ls8" # Print 20, 30, 36, 60
@@ -363,9 +363,22 @@ class CPU:
         self.pc += (self.ram_read(self.pc) >> 6) + 1
 
     def and_(self):
-        pass
+        reg_a = self.ram_read(self.pc + 1)
+        reg_b = self.ram_read(self.pc + 2)
+
+        self.alu('AND', reg_a, reg_b)
+
+        # Advance PC by the highest two order bits
+        self.pc += (self.ram_read(self.pc) >> 6) + 1
+
     def mod(self):
-        pass
+        reg_a = self.ram_read(self.pc + 1)
+        reg_b = self.ram_read(self.pc + 2)
+
+        self.alu('MOD', reg_a, reg_b)
+
+        # Advance PC by the highest two order bits
+        self.pc += (self.ram_read(self.pc) >> 6) + 1
 
     def mul(self):
         reg_a = self.ram_read(self.pc + 1)
@@ -377,12 +390,46 @@ class CPU:
         self.pc += (self.ram_read(self.pc) >> 6) + 1
 
     def not_(self):
-        pass
+        reg_a = self.ram_read(self.pc + 1)
+
+        self.alu('NOT', reg_a)
+
+        # Advance PC by the highest two order bits
+        self.pc += (self.ram_read(self.pc) >> 6) + 1
+
     def or_(self):
-        pass
+        reg_a = self.ram_read(self.pc + 1)
+        reg_b = self.ram_read(self.pc + 2)
+
+        self.alu('OR', reg_a, reg_b)
+
+        # Advance PC by the highest two order bits
+        self.pc += (self.ram_read(self.pc) >> 6) + 1
+
     def shl(self):
-        pass
+        reg_a = self.ram_read(self.pc + 1)
+        reg_b = self.ram_read(self.pc + 2)
+
+        self.alu('SHL', reg_a, reg_b)
+
+        # Advance PC by the highest two order bits
+        self.pc += (self.ram_read(self.pc) >> 6) + 1
+
     def shr(self):
-        pass
+        reg_a = self.ram_read(self.pc + 1)
+        reg_b = self.ram_read(self.pc + 2)
+
+        self.alu('SHR', reg_a, reg_b)
+
+        # Advance PC by the highest two order bits
+        self.pc += (self.ram_read(self.pc) >> 6) + 1
+
     def xor(self):
-        pass
+        reg_a = self.ram_read(self.pc + 1)
+        reg_b = self.ram_read(self.pc + 2)
+
+        self.alu('XOR', reg_a, reg_b)
+
+        # Advance PC by the highest two order bits
+        self.pc += (self.ram_read(self.pc) >> 6) + 1
+
