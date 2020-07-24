@@ -16,7 +16,14 @@ instructions = {
     'JNE':  0b00010110,
     'CMP':  0b00100111,
     'ADD':  0b00100000,
-    'MUL':  0b00100010
+    'MUL':  0b00100010,
+    'MOD':  0b00100100,
+    'AND':  0b00101000,
+    'NOT':  0b00101001,
+    'OR':   0b00101010,
+    'XOR':  0b00101011,
+    'SHL':  0b00101100,
+    'SHR':  0b00101101
 }
 
 
@@ -49,6 +56,13 @@ class CPU:
         self.branch_table[instructions['CMP' ]] = self.cmp
         self.branch_table[instructions['ADD' ]] = self.add
         self.branch_table[instructions['MUL' ]] = self.mul
+        self.branch_table[instructions['MOD' ]] = self.mod
+        self.branch_table[instructions['AND' ]] = self.and_
+        self.branch_table[instructions['NOT' ]] = self.not_
+        self.branch_table[instructions['OR'  ]] = self.or_
+        self.branch_table[instructions['XOR' ]] = self.xor
+        self.branch_table[instructions['SHL' ]] = self.shl
+        self.branch_table[instructions['SHR' ]] = self.shr
 
     # Register getter methods
     @property
@@ -182,8 +196,22 @@ class CPU:
                 self.fl |= 0x04
             else:
                 self.fl &= ~0x04
-        if op == "MUL":
+        elif op == "MUL":
             self.registers[reg_a] *= self.registers[reg_b]
+        elif op == "AND":
+            self.registers[reg_a] &= self.registers[reg_b]
+        elif op == "OR":
+            self.registers[reg_a] |= self.registers[reg_b]
+        elif op == "XOR":
+            self.registers[reg_a] ^= self.registers[reg_b]
+        elif op == "NOT":
+            self.registers[reg_a] = ~self.registers[reg_a]
+        elif op == "SHL":
+            self.registers[reg_a] <<= self.registers[reg_b]
+        elif op == "SHR":
+            self.registers[reg_a] >>= self.registers[reg_b]
+        elif op == "MOD":
+            self.registers[reg_a] %= self.registers[reg_b]
         else:
             raise Exception("Unsupported ALU operation")
 
@@ -334,6 +362,11 @@ class CPU:
         # Advance PC by the highest two order bits
         self.pc += (self.ram_read(self.pc) >> 6) + 1
 
+    def and_(self):
+        pass
+    def mod(self):
+        pass
+
     def mul(self):
         reg_a = self.ram_read(self.pc + 1)
         reg_b = self.ram_read(self.pc + 2)
@@ -343,3 +376,13 @@ class CPU:
         # Advance PC by the highest two order bits
         self.pc += (self.ram_read(self.pc) >> 6) + 1
 
+    def not_(self):
+        pass
+    def or_(self):
+        pass
+    def shl(self):
+        pass
+    def shr(self):
+        pass
+    def xor(self):
+        pass
