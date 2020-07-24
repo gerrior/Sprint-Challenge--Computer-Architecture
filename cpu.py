@@ -12,8 +12,9 @@ instructions = {
     'CALL': 0b00010000,
     'RET':  0b00010001,
     'JMP':  0b00010100,
-    'JEQ':  0b01010101,
-    'JNE':  0b01010110,
+    'JEQ':  0b00010101,
+    'JNE':  0b00010110,
+    'CMP':  0b00100111,
     'ADD':  0b00100000,
     'MUL':  0b00100010
 }
@@ -45,6 +46,7 @@ class CPU:
         self.branch_table[instructions['JMP' ]] = self.jmp
         self.branch_table[instructions['JEQ' ]] = self.jeq
         self.branch_table[instructions['JNE' ]] = self.jne
+        self.branch_table[instructions['CMP' ]] = self.cmp
         self.branch_table[instructions['ADD' ]] = self.add
         self.branch_table[instructions['MUL' ]] = self.mul
 
@@ -117,11 +119,12 @@ class CPU:
         program = []
 
         try:
-            filename = sys.argv[1] # This will throw if there is no second argument
+            # filename = sys.argv[1] # This will throw if there is no second argument
             # filename = "examples/mult.ls8"
             # filename = "examples/print8.ls8"
             # filename = "examples/stack.ls8"
             # filename = "examples/call.ls8"
+            filename = "sctest.ls8"
 
             file = open(filename, "r")
             for line in file:
@@ -162,7 +165,24 @@ class CPU:
         if op == "ADD":
             self.registers[reg_a] += self.registers[reg_b]
         elif op == "CMP":
-            pass
+            # If they are equal, set the Equal E flag to 1, otherwise set it to 0.
+            if self.registers[reg_a] == self.registers[reg_b]:
+                self.fl |= 0x01
+            else:
+                self.fl &= ~0x01
+
+            # If registerA is greater than registerB, set the Greater-than G flag to 1, otherwise set it to 0.
+            if self.registers[reg_a] > self.registers[reg_b]:
+                self.fl |= 0x02
+            else:
+                self.fl &= ~0x02
+
+            # If registerA is less than registerB, set the Less-than L flag to 1, otherwise set it to 0.
+            if self.registers[reg_a] < self.registers[reg_b]:
+                self.fl |= 0x04
+            else:
+                self.fl &= ~0x04
+
         #elif op == "SUB": etc
         else:
             raise Exception("Unsupported ALU operation")
@@ -195,7 +215,7 @@ class CPU:
             self.branch_table[self.ir]()
 
             # Advance PC by the highest two order bits
-            if self.ir != instructions['CALL'] and self.ir != instructions['RET']:
+            if self.ir != instructions['CALL'] and self.ir != instructions['RET'] and self.ir != instructions['JMP']:
                 self.pc = self.pc + (self.ram_read(self.pc) >> 6) + 1
 
     def hlt(self):
@@ -260,13 +280,37 @@ class CPU:
         # Set the PC to the return address
         self.pc = return_addr
 
+    # Jump to the address stored in the given register
     def jmp(self):
-        return
+        # Set the PC to the address stored in the given register
+        reg_num = self.ram_read(self.pc + 1)
+        stored_addr = self.registers[reg_num]
+
+        self.pc = stored_addr
 
     def jeq(self):
-        return
+        # If equal flag is set (true), jump to the address stored in the given register.
+        if self.fl & 0x01 == True:
+            # Set the PC to the address stored in the given register
+            reg_num = self.ram_read(self.pc + 1)
+            stored_addr = self.registers[reg_num]
+
+            self.pc = stored_addr
 
     def jne(self):
+        # If equal flag is set (true), jump to the address stored in the given register.
+        if self.fl & 0x01 == False:
+            # Set the PC to the address stored in the given register
+            reg_num = self.ram_read(self.pc + 1)
+            stored_addr = self.registers[reg_num]
+
+            self.pc = stored_addr
+
+    def cmp(self):
+        reg_a = self.ram_read(self.pc + 1)
+        reg_b = self.ram_read(self.pc + 2)
+
+        self.alu('CMP', reg_a, reg_b)
         return
 
     def add(self):
