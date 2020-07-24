@@ -11,6 +11,9 @@ instructions = {
     'PRN':  0b00000111,
     'CALL': 0b00010000,
     'RET':  0b00010001,
+    'JMP':  0b00010100,
+    'JEQ':  0b01010101,
+    'JNE':  0b01010110,
     'ADD':  0b00100000,
     'MUL':  0b00100010
 }
@@ -39,6 +42,9 @@ class CPU:
         self.branch_table[instructions['PRN' ]] = self.prn
         self.branch_table[instructions['CALL']] = self.call
         self.branch_table[instructions['RET' ]] = self.ret
+        self.branch_table[instructions['JMP' ]] = self.jmp
+        self.branch_table[instructions['JEQ' ]] = self.jeq
+        self.branch_table[instructions['JNE' ]] = self.jne
         self.branch_table[instructions['ADD' ]] = self.add
         self.branch_table[instructions['MUL' ]] = self.mul
 
@@ -155,6 +161,8 @@ class CPU:
 
         if op == "ADD":
             self.registers[reg_a] += self.registers[reg_b]
+        elif op == "CMP":
+            pass
         #elif op == "SUB": etc
         else:
             raise Exception("Unsupported ALU operation")
@@ -251,6 +259,15 @@ class CPU:
 
         # Set the PC to the return address
         self.pc = return_addr
+
+    def jmp(self):
+        return
+
+    def jeq(self):
+        return
+
+    def jne(self):
+        return
 
     def add(self):
         reg_a = self.ram_read(self.pc + 1)
