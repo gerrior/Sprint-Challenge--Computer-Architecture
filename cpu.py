@@ -182,8 +182,8 @@ class CPU:
                 self.fl |= 0x04
             else:
                 self.fl &= ~0x04
-
-        #elif op == "SUB": etc
+        if op == "MUL":
+            self.registers[reg_a] *= self.registers[reg_b]
         else:
             raise Exception("Unsupported ALU operation")
 
@@ -335,7 +335,10 @@ class CPU:
         self.pc += (self.ram_read(self.pc) >> 6) + 1
 
     def mul(self):
-        self.r0 = self.r0 * self.r1
+        reg_a = self.ram_read(self.pc + 1)
+        reg_b = self.ram_read(self.pc + 2)
+
+        self.alu('MUL', reg_a, reg_b)
 
         # Advance PC by the highest two order bits
         self.pc += (self.ram_read(self.pc) >> 6) + 1
