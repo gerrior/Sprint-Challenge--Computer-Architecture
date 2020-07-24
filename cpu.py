@@ -392,7 +392,7 @@ class CPU:
     def not_(self):
         reg_a = self.ram_read(self.pc + 1)
 
-        self.alu('NOT', reg_a)
+        self.alu('NOT', reg_a, 0)
 
         # Advance PC by the highest two order bits
         self.pc += (self.ram_read(self.pc) >> 6) + 1
