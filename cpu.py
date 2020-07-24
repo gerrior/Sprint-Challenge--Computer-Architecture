@@ -215,7 +215,7 @@ class CPU:
             self.branch_table[self.ir]()
 
             # Advance PC by the highest two order bits
-            if self.ir != instructions['CALL'] and self.ir != instructions['RET'] and self.ir != instructions['JMP']:
+            if self.ir != instructions['CALL'] and self.ir != instructions['RET'] and self.ir != instructions['JMP'] and self.ir != instructions['JEQ'] and self.ir != instructions['JNE'] :
                 self.pc = self.pc + (self.ram_read(self.pc) >> 6) + 1
 
     def hlt(self):
@@ -296,6 +296,8 @@ class CPU:
             stored_addr = self.registers[reg_num]
 
             self.pc = stored_addr
+        else:
+            self.pc = self.pc + (self.ram_read(self.pc) >> 6) + 1
 
     def jne(self):
         # If equal flag is set (true), jump to the address stored in the given register.
@@ -305,6 +307,8 @@ class CPU:
             stored_addr = self.registers[reg_num]
 
             self.pc = stored_addr
+        else:
+            self.pc = self.pc + (self.ram_read(self.pc) >> 6) + 1
 
     def cmp(self):
         reg_a = self.ram_read(self.pc + 1)
